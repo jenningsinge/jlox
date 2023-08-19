@@ -77,34 +77,7 @@ public class Scanner {
                     // A comment goes until the end of the line.
                     while (peek() != '\n' && !isAtEnd()) advance();
                 } else if (match('*')) {
-                    // A block comment goes until "*/" is found.
-                    // To handle nested block comments, the number of "/*" without a corresponding "*/" is tracked.
-                    // When that number reaches zero, all block comments have been parsed.
-                    int unmatched = 1;
-                    while (true) {
-                        if ((peek() == '*' && peekNext() == '/') || isAtEnd()) {
-                            if (peek() == '*' && peekNext() == '/') {
-                                unmatched--;
-                            }
-                            if (unmatched == 0 || isAtEnd()) {
-                                break;
-                            }
-                        }
-                        if (peek() == '\n') line++;
-                        if (peek() == '/' && peekNext() == '*') {
-                            unmatched++;
-                            advance(); // Move over "/". The following advance will move over "*".
-                        }
-                        advance();
-                    }
-
-                    if (isAtEnd()) {
-                        Lox.error(line, "Unterminated block comment.");
-                    } else {
-                        // Skip over final closing "*/".
-                        advance();
-                        advance();
-                    }
+                    blockComment();
                 } else {
                     addToken(TokenType.SLASH);
                 }
@@ -126,6 +99,37 @@ public class Scanner {
                     Lox.error(line, "Unexpected character.");
                 }
                 break;
+        }
+    }
+
+    private void blockComment() {
+        // A block comment goes until "*/" is found.
+        // To handle nested block comments, the number of "/*" without a corresponding "*/" is tracked.
+        // When that number reaches zero, all block comments have been parsed.
+        int unmatched = 1;
+        while (true) {
+            if ((peek() == '*' && peekNext() == '/') || isAtEnd()) {
+                if (peek() == '*' && peekNext() == '/') {
+                    unmatched--;
+                }
+                if (unmatched == 0 || isAtEnd()) {
+                    break;
+                }
+            }
+            if (peek() == '\n') line++;
+            if (peek() == '/' && peekNext() == '*') {
+                unmatched++;
+                advance(); // Move over "/". The following advance will move over "*".
+            }
+            advance();
+        }
+
+        if (isAtEnd()) {
+            Lox.error(line, "Unterminated block comment.");
+        } else {
+            // Skip over final closing "*/".
+            advance();
+            advance();
         }
     }
 
