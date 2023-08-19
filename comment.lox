@@ -1,0 +1,11 @@
+// a comment
+var
+/
+*
+/* a comment
+ * another line
+ * line 3 /* nested block */
+ * /* another /* another */ */
+ */
+
+ /*
