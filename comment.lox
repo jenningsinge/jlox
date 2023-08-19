@@ -6,6 +6,5 @@ var
  * another line
  * line 3 /* nested block */
  * /* another /* another */ */
+ * // a comment
  */
-
- /*
