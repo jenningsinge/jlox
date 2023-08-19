@@ -76,6 +76,24 @@ public class Scanner {
                 if (match('/')) {
                     // A comment goes until the end of the line.
                     while (peek() != '\n' && !isAtEnd()) advance();
+                } else if (match('*')) {
+                    // A block comment goes until "*/" is found.
+                    while (true) {
+                        if ((peek() == '*' && peekNext() == '/') || isAtEnd()) {
+                            break;
+                        }
+                        if (peek() == '\n') line++;
+                        advance();
+                    }
+
+                    if (isAtEnd()) {
+                        Lox.error(line, "Unterminated block comment.");
+                        return;
+                    } else {
+                        // Skip over closing "*/".
+                        advance();
+                        advance();
+                    }
                 } else {
                     addToken(TokenType.SLASH);
                 }
